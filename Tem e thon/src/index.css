@@ -1,0 +1,10 @@
+/* Base Styles */
+body {
+  background: linear-gradient(to bottom right, #4a148c, #b71c1c, #4a148c);
+}
+
+/* Utilities */
+.backdrop-blur-lg {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px); /* For Safari support */
+}
