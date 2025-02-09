@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh; /* Ensuring full height but allows scrolling */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: start; /* Start alignment for natural scrolling */
+            background: linear-gradient(135deg, #2E7D32, #028090, #05668D);
+            background-size: 300% 300%;
+            animation: waveBG 10s infinite alternate;
+            color: white;
+            overflow-y: auto; /* Allows scrolling */
+        }
+    
+        h2 {
+            margin-bottom: 10px;
+        }
+    
+        /* Centering Table & Adding Space Below Results */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+    
+        table {
+            width: 80%;
+            margin-top: 10px;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    
+        th, td {
+            border: 1px solid white;
+            padding: 10px;
+        }
+    
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    
+        /* Centering Button */
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+    
+        button {
+            background-color: #1B5E20; /* Dark Green */
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+    
+        button:hover {
+            background-color: #388E3C;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+    
+        @keyframes waveBG {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+    </style>
+    
+    
+</head>
+<body>
+    <h1>Carbon Footprint Calculator</h1>
+    <input type="file" id="fileInput" accept=".csv">
+    <button onclick="processCSV()">Calculate Footprint</button>
+    <h2>Results</h2>
+    <p id="totalDistance"></p>
+    <p id="totalWaste"></p>
+    <p id="carbonFootprint"></p>
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Distance Travelled (km)</th>
+                <th>Waste Managed (kg)</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        function processCSV() {
+            const fileInput = document.getElementById('fileInput').files[0];
+            if (!fileInput) {
+                alert("Please upload a CSV file.");
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                const rows = text.split('\n').slice(1);
+                let totalDistance = 0;
+                let totalWaste = 0;
+                let carbonFootprint = 0;
+                let tableBody = document.querySelector("#data-table tbody");
+                tableBody.innerHTML = "";
+                
+                rows.forEach(row => {
+                    const columns = row.split(',');
+                    if (columns.length === 3) {
+                        let distance = parseFloat(columns[1]) || 0;
+                        let waste = parseFloat(columns[2]) || 0;
+                        totalDistance += distance;
+                        totalWaste += waste;
+                        carbonFootprint += (distance * 0.2) + (waste * 0.5);
+                        
+                        let tr = document.createElement("tr");
+                        columns.forEach(col => {
+                            let td = document.createElement("td");
+                            td.textContent = col;
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    }
+                });
+                
+                document.getElementById("totalDistance").textContent = "Total Distance Travelled: " + totalDistance + " km";
+                document.getElementById("totalWaste").textContent = "Total Waste Managed: " + totalWaste + " kg";
+                document.getElementById("carbonFootprint").textContent = "Total Carbon Footprint: " + carbonFootprint.toFixed(2) + " kg CO2";
+            };
+            reader.readAsText(fileInput);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="leaves">
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+        <div class="leaf"></div>
+    </div>
+    
+    <div class="container">
+        <h1>Carbon Emission Progress Tracker</h1>
+        <button id="getProgress">Get Progress</button>
+        <div id="errorMessage" class="error-message"></div>
+        <div class="chart-container">
+            <canvas id="progressChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let chart = null;
+        const errorMessageDiv = document.getElementById('errorMessage');
+
+        document.getElementById('getProgress').addEventListener('click', async () => {
+            try {
+                errorMessageDiv.textContent = ''; // Clear any previous error
+                const response = await fetch('/get_data');
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load data');
+                }
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                console.log('Received data:', data); // Debug log
+
+                // Destroy existing chart if it exists
+                if (chart) {
+                    chart.destroy();
+                }
+                
+                const ctx = document.getElementById('progressChart').getContext('2d');
+                ctx.canvas.style.backgroundColor = '#000000';
+                
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [{
+                            label: 'Carbon Emissions (kg CO2)',
+                            data: data.emissions,
+                            borderColor: '#00ff00',
+                            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#00ff00',
+                            pointBorderColor: '#00ff00',
+                            pointHoverBackgroundColor: '#ffffff',
+                            pointHoverBorderColor: '#00ff00'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#ffffff'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#ffffff'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Carbon Emissions (kg CO2)',
+                                    color: '#ffffff'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#ffffff'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Date',
+                                    color: '#ffffff'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessageDiv.textContent = Error;{error.message};
+            }
+        });
+    </script>
+</body>
+</html>

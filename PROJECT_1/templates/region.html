@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regional CO₂ Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-900 via-green-900 to-blue-900 text-white min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
+    
+    <!-- Floating Elements -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute w-24 h-24 bg-blue-500 opacity-20 rounded-full -top-10 left-10 animate-pulse"></div>
+        <div class="absolute w-16 h-16 bg-green-400 opacity-30 rounded-full top-20 right-16 animate-bounce"></div>
+        <div class="absolute w-20 h-20 bg-green-600 opacity-25 rounded-full bottom-10 left-20 animate-spin-slow"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="glass shadow-lg max-w-lg w-full text-center relative z-10">
+        <h1 class="text-4xl font-extrabold text-white mb-4">📍 Regional CO₂ Emissions</h1>
+        <p class="text-lg text-white/80">Find out the estimated CO₂ emissions for your location.</p>
+
+        <button onclick="getLocation()" class="mt-6 bg-blue-500 px-6 py-3 rounded-lg text-white font-bold hover:bg-blue-600 transition shadow-md transform hover:scale-105">
+            🌍 Get My Region CO₂ Data
+        </button>
+
+        <button onclick="getLocation()" class="mt-6 bg-blue-500 px-6 py-3 rounded-lg text-white font-bold hover:bg-blue-600 transition shadow-md transform hover:scale-105">
+            🌍 Choose your region 
+        </button>
+        
+        <p id="region-info" class="mt-6 text-lg text-white/80"></p>
+    </div>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(fetchCO2Data);
+            } else {
+                document.getElementById("region-info").innerText = "❌ Geolocation is not supported.";
+            }
+        }
+
+        function fetchCO2Data(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            fetch(`/region-data?lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("region-info").innerText = `🌱 Estimated CO₂ Emissions for your region: ${data.co2} kg CO₂ per capita`;
+            })
+            .catch(() => {
+                document.getElementById("region-info").innerText = "⚠️ Error fetching CO₂ data.";
+            });
+        }
+    </script>
+</body>
+</html>

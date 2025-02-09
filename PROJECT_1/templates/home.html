@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        .glow:hover {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-800 via-green-600 to-emerald-800 text-white min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
+    
+
+    <!-- Main Content -->
+    <div class="text-center space-y-8 relative z-10">
+        <h1 class="text-5xl font-extrabold drop-shadow-md floating">🌱 Carbon Footprint Tracker</h1>
+        <p class="text-xl text-white/80 animate-pulse">Choose an option to proceed:</p>
+
+        <div class="flex flex-wrap justify-center gap-6">
+            <a href="/calculator" class="bg-green-500 px-8 py-4 rounded-lg text-white font-bold glow transition transform duration-300">
+                ♻️ Footprint Calculator
+            </a>
+            <a href="/region" class="bg-blue-500 px-8 py-4 rounded-lg text-white font-bold glow transition transform duration-300">
+                🌍 Regional CO₂ Calculator
+            </a>
+            <a href="/progress" class="bg-yellow-500 px-8 py-4 rounded-lg text-white font-bold glow transition transform duration-300">
+                📈 Progress Tracker
+            </a>
+        </div>
+    </div>
+</body>
+</html>

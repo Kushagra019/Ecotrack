@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: hsl(125, 40%, 50%);
+            animation: fadeIn 1.2s ease-in-out;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: #e8f8e0; /* Very light green */
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(144, 238, 144, 0.5);
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 1s ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #2e7d32;
+            animation: fadeUp 1s ease-in-out;
+        }
+
+        input[type="file"] {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #4caf50;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+        }
+
+        input[type="file"]:hover {
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s ease-in-out, box-shadow 0.3s;
+        }
+
+        button:hover {
+            background-color: #388e3c;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .results {
+            margin-top: 20px;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+        }
+
+        .results.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Falling Leaves Animation */
+        .leaf {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/3/3f/Green_leaf_icon.png');
+            background-size: cover;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Carbon Footprint Calculator</h1>
+        <p>Upload a CSV file with columns: <strong>Name, Distance Traveled, Waste Management</strong></p>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="csvFile" name="file" accept=".csv" required>
+            <br>
+            <button type="submit">Upload and Calculate</button>
+        </form>
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const fileInput = document.getElementById("csvFile");
+            if (!fileInput.files[0]) {
+                alert("Please upload a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = "<p>Processing...</p>";
+            resultsDiv.classList.remove("show");
+
+            try {
+                const response = await fetch("/upload", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to process the file.");
+                }
+
+                const result = await response.json();
+                resultsDiv.innerHTML = `
+                    <h3>Results:</h3>
+                    <p><strong>Total Distance Traveled:</strong> ${result.total_distance} km</p>
+                    <p><strong>Total Waste Management:</strong> ${result.total_waste} kg</p>
+                    <p><strong>Carbon Footprint:</strong> ${result.carbon_footprint} kg CO₂e</p>
+                `;
+                resultsDiv.classList.add("show");
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                resultsDiv.classList.add("show");
+            }
+        });
+
+        // Function to create falling leaves dynamically
+        function createLeaves() {
+            const numberOfLeaves = 10; // Change to more if you want
+            for (let i = 0; i < numberOfLeaves; i++) {
+                let leaf = document.createElement("div");
+                leaf.classList.add("leaf");
+                document.body.appendChild(leaf);
+
+                // Random Positioning and Animation Delay
+                leaf.style.left = Math.random() * window.innerWidth + "px";
+                leaf.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                leaf.style.animationDelay = Math.random() * 5 + "s";
+                leaf.style.width = Math.random() * 40 + 20 + "px"; 
+                leaf.style.height = leaf.style.width;
+            }
+        }
+
+        createLeaves(); // Call the function to generate leaves
+    </script>
+</body>
+</html>

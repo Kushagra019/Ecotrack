@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-User Carbon Footprint Tracker</title>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-green-900 via-green-700 to-emerald-800 flex items-center justify-center">
+    
+    <div class="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg p-8 w-full max-w-3xl border border-white/20 animate-fadeIn">
+        <div class="text-center mb-6">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <i data-lucide="leaf" class="w-12 h-12 text-white animate-pulse"></i>
+                <h1 class="text-3xl font-bold text-white">Multi-User Carbon Footprint Tracker</h1>
+            </div>
+            <p class="text-lg text-white/80">
+                Enter the number of users and input data to calculate their total carbon footprint.
+            </p>
+        </div>
+
+        <!-- Number of Users Input -->
+        <div class="mb-6">
+            <label class="block text-white text-lg font-semibold mb-2">Number of Users:</label>
+            <input type="number" id="user-count"
+                class="w-full px-4 py-2 bg-white/10 text-white border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                placeholder="Enter number of users (Max 10)">
+            <p id="error-message" class="text-red-500 text-sm mt-2 hidden">⚠️ Maximum 10 users allowed!</p>
+        </div>
+
+        <button onclick="generateUserInputs()" 
+            class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300">
+            Generate User Inputs
+        </button>
+
+        <!-- User Input Fields (Dynamic) -->
+        <form id="multiuser-form" class="hidden mt-6">
+            <div id="user-inputs"></div>
+            <button type="button" onclick="calculateMultiUser()" 
+                class="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-4 mt-4 rounded-lg transition-all duration-300">
+                Calculate Carbon Footprint
+            </button>
+        </form>
+
+        <!-- Result Section -->
+        <div id="result-container" class="hidden mt-6 p-6 bg-white/10 rounded-lg border border-white/20 text-center">
+            <h2 class="text-2xl font-bold text-white mb-3">Total Carbon Footprint</h2>
+            <div class="text-4xl font-bold text-white">
+                <span id="total-emissions">0.00</span>
+                <span class="text-lg font-normal ml-2">kg CO₂</span>
+            </div>
+            <p class="mt-2 text-white/70">This is an estimate based on the input values provided.</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='multiuser.js') }}"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
